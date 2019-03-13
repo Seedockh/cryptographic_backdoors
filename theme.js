@@ -13,6 +13,9 @@ export const theme = {
     text: '#0ff',
     background: 'black',
     link: '#66ff66',
-    code: '#ff704d'
+    code: '#ff704d',
   },
+  table: {
+    border: 0
+  }
 }

@@ -3,7 +3,7 @@ import { Head, Notes, Image, Appear } from 'mdx-deck'
 export { theme } from './theme'
 
 <Head>
-  <title>Presentation Title</title>
+  <title>Cryptographic Backdoors</title>
 </Head>
 
 # Cryptographic Backdoors
@@ -19,11 +19,11 @@ export { theme } from './theme'
 
 ---
 
-<Image src="./JSRat/backdoor.gif" size="65vw"/>
+<Image src="./img/backdoor.gif" size="65vw"/>
 
 ---
 
-# Backdoor :
+# ~ Backdoor ~
 <ul>
   <Appear>
     <li>hidden method</li>
@@ -34,6 +34,62 @@ export { theme } from './theme'
 </ul>
 
 ---
+
+## ~ Different kinds of backdoors ~
+<ul>
+<Appear>
+  <li>ports opening</li>
+  <li>specific authorized link</li>
+  <li>shell backdoor tool</li>
+  <li>unchanged default password</li>
+  <li>hidden decryption key for encrypted transactions</li>
+  <li>etc..</li>
+</Appear>
+</ul>
+
+
+
+---
+
+## Can be used for both :
+
+<table >
+  <tr>
+    <td>
+      Good
+    </td>
+    <td>
+      <code>Evil</code>
+    </td>
+  </tr>
+  <tr>
+    <td><ul>
+        <li>listen messages & transactions</li>
+        <li>to flush any criminal activity</li>
+        <li>like terrorism, drug dealing, smuggling, etc..</li>
+    </ul></td>
+    <td>
+      <ul>
+        <li><code>scan existing loopholes</code></li>
+        <li><code>open corresponding ports</code></li>
+        <li><code>modifiy system registration files</code></li>
+        <li><code>enjoy remote access to the system</code></li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+
+---
+
+<h3>legal software</h3>
+<h3>+</h3>
+<h3>legal backdoor</h3>
+<h3>=</h3>
+<h3>Monitored Software</h3>
+
+---
+
 
 <h3>legal software</h3>
 <h3>+</h3>
@@ -76,7 +132,7 @@ Original author : Casey Smith
 ```
 ---
 
-<Image src="./JSRat/listenning.png" size="95vw"/>
+<Image src="./img/listenning.png" size="95vw"/>
 
 ---
 
@@ -100,11 +156,11 @@ Original author : Casey Smith
 ```
 ---
 
-<Image src="./JSRat/connect.png" size="90vw"/>
+<Image src="./img/connect.png" size="90vw"/>
 
 ---
 
-<Image src="./JSRat/example_connected.png" size="90vw"/>
+<Image src="./img/example_connected.png" size="90vw"/>
 
 ---
 
@@ -112,19 +168,25 @@ Original author : Casey Smith
 
 ---
 
-<Image src="./JSRat/connected.png" size="55vw"/>
+<Image src="./img/connected.png" size="55vw"/>
 
 ---
 
-# Cryptographic :
+
+<Image src="./img/hackerman.gif" size="55vw"/>
+
+---
+
+
+# ~ Cryptographic ~
 <ul>
   <Appear>
     <li>suite of algorithms</li>
     <li>to implement security and confidentiality</li>
     <li>3 algorithms :<ul>
       <Appear>
-        <li>key generation</li>
-        <li>encryption (SHA, MD5, etc.)</li>
+        <li>key generation (random most of the time)</li>
+        <li>encryption (eg. SHA, MD5)</li>
         <li>decryption </li>
       </Appear>
     </ul> </li>
@@ -134,62 +196,112 @@ Original author : Casey Smith
 ---
 
 ```
-cipher = [ encryption, decryption ]
+cipher = { encrypt, decrypt }
 ```
 
 ---
 
-  #### => Frontdoor key : cipher chosen by the encryptor
+  #### 🔘 Frontdoor key : cipher chosen by the encryptor
   ```jsx
-      => regular password
+      🔒 regular password
   ```
-  #### => Backdoor key : cipher chosen by the algorithm designer
+  #### 🔘 Backdoor key : cipher chosen by the algorithm designer
   ```jsx
-      => master password
+      🔒 master password
   ```
 
 ---
 
-  #### Symmetrical encryption : same key to encrypt & decrypt
+  #### 🔘 Symmetrical encryption : same key to encrypt & decrypt
   ```jsx
     password = "toto"
-    hash = encrypt(password) // hash = ************
+    hash = encrypt(password) // 🔒 hash = ************
     dehash = decrypt(hash) // dehash = toto
   ```
-  #### Asymmetrical encryption : uses a cipher [encrypt, decrypt]
+  #### 🔘 Asymmetrical encryption : uses a cipher { encrypt, decrypt }
   ```jsx
     password = "toto"
-    hash = encrypt(password) // hash = ************
-    superHash = cipher.encrypt(hash) // superHash = ############
+    hash = encrypt(password) // 🔒 hash = ************
+    superHash = cipher.encrypt(hash) // 🔒 superHash = ############
   ```
   ❗️ cipher.encrypt is public, but cipher.decrypt is secret ❗️
 
 ---
 
 
-  #### Backdoor encryption :
+  #### 🔘 Backdoor encryption :
   ```jsx
   password = "toto"
   hash = randomEncrypt(password)
-             // hash = ***###***###***
+             // 🔒 hash = ***###***###***
 
   superHash = cipher.encrypt(hash)
-           // superHash = #*#*#*#*#*#*#*#*#
+           // 🔒 superHash = #*#*#*#*#*#*#*#*#
 
   masterHash = masterKey.cipher.encrypt(superHash);
-         // masterHash = #**##;;;#*#***##;#***;;###
+         // 🔒 masterHash = #**##;;;#*#***##;#***;;###
 
-  backdoorHash = {header: superHash, password: masterHash}
+  🔒 backdoorHash = {header: superHash, password: masterHash}
   ```
 
 ---
 
-Sources : <https://crypto.stackexchange.com/questions/32840/laymans-explanation-of-encryption-backdoors>
-
+### Sources :
+<https://crypto.stackexchange.com/questions/32840/laymans-explanation-of-encryption-backdoors>
 
 
 ---
 
+## currentSubject = ```Backdoors``` + ```Cryptographic```;
+
+---
+
+# ~ Cryptographic Backdoor ~
+<ul>
+  <Appear>
+    <li>backdoor into encrypted communications</li>
+    <li>not yet mandatory, but is a law enforcement question</li>
+    <li>often created by Security Agencies like NSA, FBI, etc..</li>
+    <li>so they can listen every transactions & messages
+      <ul><br/><li><b>public goal : gather data to prevent people from criminality</b></li>
+      <li><code>secret goal : is there any ? (sell data to companies ?)</code></li></ul>
+    </li>
+  </Appear>
+</ul>
+
+
+---
+
+## Example : « Snowden case »
+<ol>
+  <Appear>
+    <li>« Elliptic Curve » (EC) created a much less<br/>
+     predictable random-bytes generator, the Dual Elliptic<br/>
+     Curve DataBytes Random Generator (Dual_EC_DBRG)</li>
+    <li><code>Year 2000 : Dual_EC_DBRG integrated in<br/>
+    some computers by the NSA</code></li>
+    <li>Year 2004 : NSA deals with RSA (leaders<br/>
+    in cryptography) to use Dual_EC_DBRG as default.</li>
+    <li><code>Year 2015 : Even U.S. government and others ended<br/>
+    asking to private companies to include backdoors<br/>
+    to their encryption algorithms.</code></li>
+    <li>Edward Snowden leaked proofs that Dual_EC_DBRG<br/>
+    had a backdoor in it.</li>
+  </Appear>
+</ol>
+
+
+---
+
+## What do you think about it ?
+ -> Should we give up on our citizen rights and privacy <br/>
+to grant NSA and FBI to protect us from « bad » people ?<br/>
+
+<code>   -> Should we keep refusing to insert backdoors legally ?</code>
+
+### -> Shouldn't we decide about this ? ✊
+
+---
 
 ```jsx
 « Mandatory cryptographic backdoors will leave all of
@@ -201,3 +313,11 @@ eavesdrop and investigate only if they too comply
 with the law, by using backdoored encryption software
 themselves. »
 ```
+
+
+---
+
+
+<Image src="./img/thanks.gif" size="65vw"/>
+
+---
