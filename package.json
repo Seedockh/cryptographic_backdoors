@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "cryptographic_backdoors",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "mdx-deck deck.mdx",
+    "build": "mdx-deck build deck.mdx",
+    "help": "mdx-deck"
+  },
+  "devDependencies": {
+    "mdx-deck": "^2.0.0-11"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
